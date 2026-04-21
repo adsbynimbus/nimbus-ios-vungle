@@ -16,4 +16,7 @@ Pod::Spec.new do |spec|
         :git => "https://github.com/adsbynimbus/nimbus-ios-vungle.git", 
         :tag => spec.version.to_s
     }
+
+    spec.dependency 'NimbusSDK/NimbusKit', '~> 3'
+    spec.dependency 'VungleAds', '~> 7.6'
 end
