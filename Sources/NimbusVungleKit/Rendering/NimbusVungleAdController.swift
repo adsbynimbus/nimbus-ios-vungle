@@ -277,7 +277,7 @@ final class NimbusVungleAdController: AdController,
     }
     
     func rewardedAdDidRewardUser(_ rewarded: VungleRewarded) {
-        sendNimbusEvent(.completed)
+        sendNimbusEvent(.rewardEarned)
     }
 }
 
