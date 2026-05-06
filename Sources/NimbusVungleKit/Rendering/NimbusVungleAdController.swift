@@ -94,7 +94,7 @@ final class NimbusVungleAdController: AdController,
             adView.addSubview(bannerAd)
         } else if let nativeAd, let adPresentingViewController {
             guard let nativeAdViewProvider = VungleExtension.nativeAdViewProvider else {
-                sendNimbusError(.vungle(reason: .misconfiguration, stage: .render, detail: "VungleExtension.nativeAdViewProvider must be set to render native ads"))
+                sendNimbusError(.vungle(reason: .configuration, stage: .render, detail: "VungleExtension.nativeAdViewProvider must be set to render native ads"))
                 return
             }
             
