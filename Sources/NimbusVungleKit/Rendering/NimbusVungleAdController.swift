@@ -10,11 +10,12 @@ import NimbusKit
 import UIKit
 import VungleAdsSDK
 
+// Internal: Do NOT implement delegate conformance as separate extensions as the methods will not be found in runtime when built as a static library
 final class NimbusVungleAdController: AdController,
-                                      @preconcurrency VungleBannerViewDelegate,
-                                      @preconcurrency VungleNativeDelegate,
-                                      @preconcurrency VungleInterstitialDelegate,
-                                      @preconcurrency VungleRewardedDelegate {
+                                      @MainActor VungleBannerViewDelegate,
+                                      @MainActor VungleNativeDelegate,
+                                      @MainActor VungleInterstitialDelegate,
+                                      @MainActor VungleRewardedDelegate {
     
     /// Determines whether ad has registered an impression
     private var hasRegisteredAdImpression = false
@@ -280,5 +281,3 @@ final class NimbusVungleAdController: AdController,
         sendNimbusEvent(.rewardEarned)
     }
 }
-
-// Internal: Do NOT implement delegate conformance as separate extensions as the methods won't not be found in runtime when built as a static library
