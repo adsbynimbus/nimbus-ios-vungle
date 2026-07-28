@@ -43,7 +43,7 @@ public struct VungleExtension: NimbusRequestExtension, NimbusRenderExtension {
     /// }
     /// ```
     public init(appId: String? = nil) {
-        VungleAds.setIntegrationName("vunglehbs", version: "29")
+        VungleAds.setIntegrationName(Nimbus.sdkName, version: Nimbus.version)
         
         interceptor = NimbusVungleRequestInterceptor()
         
