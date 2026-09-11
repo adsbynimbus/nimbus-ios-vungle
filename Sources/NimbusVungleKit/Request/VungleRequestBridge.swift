@@ -11,16 +11,26 @@ import VungleAdsSDK
 
 protocol VungleRequestBridgeType: Sendable {
     var isVungleInitialized: Bool { get }
-    var token: String { get }
+    var token: String { get async }
 }
 
 final class VungleRequestBridge: VungleRequestBridgeType {
-    public var isVungleInitialized: Bool { VungleAds.isInitialized() }
     
-    public var token: String { VungleAds.getBiddingToken() }
+    private static let queue = DispatchQueue(label: "NimbusVungleKit.requestQueue")
+    
+    /// `VungleAds.isInitialized` is a simple boolean it doesn't need to be synchronized through queue
+    var isVungleInitialized: Bool { VungleAds.isInitialized() }
+    
+    var token: String {
+        get async {
+            await withCheckedContinuation { cont in
+                Self.queue.async { cont.resume(returning: VungleAds.getBiddingToken()) }
+            }
+        }
+    }
     
     @inlinable
-    public static func set(coppa: Bool) {
-        VunglePrivacySettings.setCOPPAStatus(coppa)
+    static func set(coppa: Bool) {
+        Self.queue.async { VunglePrivacySettings.setCOPPAStatus(coppa) }
     }
 }

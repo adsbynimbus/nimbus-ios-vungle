@@ -17,8 +17,8 @@ struct NimbusVungleRequestInterceptorTests {
     let appId = "APP_ID_12345"
     
     @Test func vungleTokenIsReturned() async throws {
-        let interceptor = NimbusVungleRequestInterceptor(bridge: MockNimbusVungleBridge())
-        let ad = try await Nimbus.bannerAd(position: "test", size: .banner)
+        let interceptor = VungleRequestInterceptor(bridge: MockNimbusVungleBridge())
+        let ad = await Nimbus.bannerAd(position: "test", size: .banner)
         let info = try await NimbusRequest(from: ad.adRequest!.request)
         let deltas = try await interceptor.modifyRequest(request: info)
         
@@ -30,9 +30,9 @@ struct NimbusVungleRequestInterceptorTests {
     
     @MainActor
     @Test func vungleTokenGetsInsertedIntoRequest() async throws {
-        let interceptor = NimbusVungleRequestInterceptor(bridge: MockNimbusVungleBridge())
+        let interceptor = VungleRequestInterceptor(bridge: MockNimbusVungleBridge())
         
-        let ad = try Nimbus.rewardedAd(position: "test")
+        let ad = Nimbus.rewardedAd(position: "test")
         ad.adRequest!.request.interceptors = [interceptor]
         
         try await ad.adRequest!.request.modifyRequestWithExtras(
@@ -47,8 +47,8 @@ struct NimbusVungleRequestInterceptorTests {
     @Test func vungleInterceptorThrowsIfVungleIsNotInitialized() async throws {
         let bridge = MockNimbusVungleBridge()
         bridge._isVungleInitialized = false
-        let interceptor = NimbusVungleRequestInterceptor(bridge: bridge)
-        let ad = try await Nimbus.bannerAd(position: "test", size: .banner)
+        let interceptor = VungleRequestInterceptor(bridge: bridge)
+        let ad = await Nimbus.bannerAd(position: "test", size: .banner)
         
         let error = await #expect(throws: NimbusError.self) {
             try await interceptor.modifyRequest(request: try NimbusRequest(from: ad.adRequest!.request))

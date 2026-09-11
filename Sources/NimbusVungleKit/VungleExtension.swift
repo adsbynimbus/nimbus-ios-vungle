@@ -45,7 +45,7 @@ public struct VungleExtension: NimbusRequestExtension, NimbusRenderExtension {
     public init(appId: String? = nil) {
         VungleAds.setIntegrationName(Nimbus.sdkName, version: Nimbus.version)
         
-        interceptor = NimbusVungleRequestInterceptor()
+        interceptor = VungleRequestInterceptor()
         
         guard let appId, !VungleAds.isInitialized() else {
             Nimbus.Log.lifecycle.debug("Skipping Vungle SDK initialization, appId was not provided or SDK is already initialized")
