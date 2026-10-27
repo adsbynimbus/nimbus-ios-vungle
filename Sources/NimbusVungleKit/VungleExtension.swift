@@ -74,6 +74,7 @@ public struct VungleExtension: NimbusRequestExtension, NimbusRenderExtension {
  to render a native Vungle ad.
  */
 public protocol VungleNativeAdViewType: UIView {
+    /// Vungle media view. Do NOT set its `delegate`: Nimbus uses it to send the `completed` event when a video ends.
     var mediaView: MediaView { get set }
     var iconImageView: UIImageView? { get set }
     var clickableViews: [UIView]? { get }

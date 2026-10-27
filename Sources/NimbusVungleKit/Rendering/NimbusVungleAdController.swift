@@ -15,15 +15,16 @@ final class NimbusVungleAdController: AdController,
                                       @MainActor VungleBannerViewDelegate,
                                       @MainActor VungleNativeDelegate,
                                       @MainActor VungleInterstitialDelegate,
-                                      @MainActor VungleRewardedDelegate {
+                                      @MainActor VungleRewardedDelegate,
+                                      @MainActor MediaViewDelegate {
     
     /// Determines whether ad has registered an impression
     private var hasRegisteredAdImpression = false
     
-    private var bannerAd: VungleBannerView?
-    private var interstitialAd: VungleInterstitial?
-    private var rewardedAd: VungleRewarded?
-    private var nativeAd: VungleNative?
+    var bannerAd: VungleBannerView?
+    var interstitialAd: VungleInterstitial?
+    var rewardedAd: VungleRewarded?
+    var nativeAd: VungleNative?
     
     override class func setup(
         response: NimbusResponse,
@@ -64,26 +65,52 @@ final class NimbusVungleAdController: AdController,
         }
         
         switch adRenderType {
-        case .banner:            
-            let vungleAdSize = VungleAdSize.VungleAdSizeFromCGSize(response.bid.size)
-            bannerAd = VungleBannerView(placementId: placementId, vungleAdSize: vungleAdSize)
-            bannerAd?.delegate = self
-            bannerAd?.load(response.bid.adm)
+        case .banner:
+            buildBannerAd(placementId: placementId).load(response.bid.adm)
         case .native:
-            nativeAd = VungleNative(placementId: placementId)
-            nativeAd?.delegate = self
-            nativeAd?.load(response.bid.adm)
+            buildNativeAd(placementId: placementId).load(response.bid.adm)
         case .interstitial:
-            interstitialAd = VungleInterstitial(placementId: placementId)
-            interstitialAd?.delegate = self
-            interstitialAd?.load(response.bid.adm)
+            buildInterstitialAd(placementId: placementId).load(response.bid.adm)
         case .rewarded:
-            rewardedAd = VungleRewarded(placementId: placementId)
-            rewardedAd?.delegate = self
-            rewardedAd?.load(response.bid.adm)
+            buildRewardedAd(placementId: placementId).load(response.bid.adm)
         @unknown default:
             sendNimbusError(NimbusError.vungle(reason: .unsupported, stage: .render, detail: "adRenderType: \(adRenderType.rawValue)"))
         }
+    }
+    
+    // MARK: - Builders (create the Vungle object and wire its delegate, without loading)
+    
+    @discardableResult
+    func buildBannerAd(placementId: String) -> VungleBannerView {
+        let vungleAdSize = VungleAdSize.VungleAdSizeFromCGSize(response.bid.size)
+        let bannerAd = VungleBannerView(placementId: placementId, vungleAdSize: vungleAdSize)
+        bannerAd.delegate = self
+        self.bannerAd = bannerAd
+        return bannerAd
+    }
+    
+    @discardableResult
+    func buildNativeAd(placementId: String) -> VungleNative {
+        let nativeAd = VungleNative(placementId: placementId)
+        nativeAd.delegate = self
+        self.nativeAd = nativeAd
+        return nativeAd
+    }
+    
+    @discardableResult
+    func buildInterstitialAd(placementId: String) -> VungleInterstitial {
+        let interstitialAd = VungleInterstitial(placementId: placementId)
+        interstitialAd.delegate = self
+        self.interstitialAd = interstitialAd
+        return interstitialAd
+    }
+    
+    @discardableResult
+    func buildRewardedAd(placementId: String) -> VungleRewarded {
+        let rewardedAd = VungleRewarded(placementId: placementId)
+        rewardedAd.delegate = self
+        self.rewardedAd = rewardedAd
+        return rewardedAd
     }
     
     func presentAdIfReady() {
@@ -93,7 +120,7 @@ final class NimbusVungleAdController: AdController,
         
         if let bannerAd {
             adView.addSubview(bannerAd)
-        } else if let nativeAd, let adPresentingViewController {
+        } else if let nativeAd {
             guard let nativeAdViewProvider = VungleExtension.nativeAdViewProvider else {
                 sendNimbusError(.vungle(reason: .configuration, stage: .render, detail: "VungleExtension.nativeAdViewProvider must be set to render native ads"))
                 return
@@ -110,6 +137,7 @@ final class NimbusVungleAdController: AdController,
                 nativeAdView.bottomAnchor.constraint(equalTo: adView.bottomAnchor)
             ])
             
+            nativeAdView.mediaView.delegate = self
             nativeAd.registerViewForInteraction(
                 view: adView,
                 mediaView: nativeAdView.mediaView,
@@ -209,6 +237,12 @@ final class NimbusVungleAdController: AdController,
     
     func nativeAdDidClick(_ native: VungleNative) {
         sendNimbusEvent(.clicked)
+    }
+    
+    // MARK: - MediaViewDelegate
+    
+    func mediaViewVideoDidEnd(_ mediaView: MediaView) {
+        sendNimbusEvent(.completed)
     }
     
     // MARK: - VungleInterstitialDelegate
