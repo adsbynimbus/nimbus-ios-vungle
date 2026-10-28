@@ -1,5 +1,5 @@
 //
-//  NimbusVungleAdController.swift
+//  VungleAdController.swift
 //  NimbusVungleKit
 //
 //  Created on 13/09/22.
@@ -11,12 +11,12 @@ import UIKit
 import VungleAdsSDK
 
 // Internal: Do NOT implement delegate conformance as separate extensions as the methods will not be found in runtime when built as a static library
-final class NimbusVungleAdController: AdController,
-                                      @MainActor VungleBannerViewDelegate,
-                                      @MainActor VungleNativeDelegate,
-                                      @MainActor VungleInterstitialDelegate,
-                                      @MainActor VungleRewardedDelegate,
-                                      @MainActor MediaViewDelegate {
+final class VungleAdController: AdController,
+                                @MainActor VungleBannerViewDelegate,
+                                @MainActor VungleNativeDelegate,
+                                @MainActor VungleInterstitialDelegate,
+                                @MainActor VungleRewardedDelegate,
+                                @MainActor MediaViewDelegate {
     
     /// Determines whether ad has registered an impression
     private var hasRegisteredAdImpression = false

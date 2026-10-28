@@ -1,5 +1,5 @@
 //
-//  NimbusVungleRequestInterceptorTests.swift
+//  VungleRequestInterceptorTests.swift
 //  NimbusVungleKitTests
 //
 //  Created on 12/09/22.
@@ -13,7 +13,7 @@ import Testing
 @testable import NimbusKit
 
 @Suite("Vungle request interceptor tests")
-struct NimbusVungleRequestInterceptorTests {
+struct VungleRequestInterceptorTests {
     let appId = "APP_ID_12345"
     
     @Test func vungleTokenIsReturned() async throws {

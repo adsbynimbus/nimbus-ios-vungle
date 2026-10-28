@@ -314,7 +314,7 @@ struct VungleAdControllerTests {
     // MARK: - Load validation
 
     @Test func loadFailsWithoutPlacementId() {
-        let adController = NimbusVungleAdController(
+        let adController = VungleAdController(
             response: NimbusResponse(id: "", bid: .init(mtype: .static, adm: bidPayload, price: 0, ext: .init())),
             isBlocking: false,
             isRewarded: false,
@@ -350,14 +350,14 @@ struct VungleAdControllerTests {
     private func makeAdController(
         _ format: Format,
         withPresenter: Bool = true
-    ) -> (NimbusVungleAdController, MockDelegate) {
+    ) -> (VungleAdController, MockDelegate) {
         let mtype: NimbusResponse.Bid.MarkupType = switch format {
         case .banner, .interstitial: .static
         case .native: .native
         case .rewarded: .video
         }
 
-        let adController = NimbusVungleAdController(
+        let adController = VungleAdController(
             response: NimbusResponse(id: "", bid: .init(
                 mtype: mtype,
                 adm: bidPayload,

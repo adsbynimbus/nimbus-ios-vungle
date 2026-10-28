@@ -26,7 +26,7 @@ public struct VungleExtension: NimbusRequestExtension, NimbusRenderExtension {
     public var network: String { "vungle" }
     
     @_documentation(visibility: internal)
-    public var controllerType: AdController.Type { NimbusVungleAdController.self }
+    public var controllerType: AdController.Type { VungleAdController.self }
     
     @_documentation(visibility: internal)
     public let interceptor: any NimbusRequest.Interceptor
